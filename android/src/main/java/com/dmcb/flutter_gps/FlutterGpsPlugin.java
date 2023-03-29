@@ -59,7 +59,9 @@ public class FlutterGpsPlugin implements FlutterPlugin, MethodCallHandler, Activ
       result.success("Android " + android.os.Build.VERSION.RELEASE);
     } else if (call.method.equals("gps")) {
       this.result = result;
-      checkPermission();
+      requestCurrentGps();
+    } else if (call.method.equals("requestPermission")) {
+      checkPermission(result);
     } else {
       result.notImplemented();
     }
@@ -85,31 +87,31 @@ public class FlutterGpsPlugin implements FlutterPlugin, MethodCallHandler, Activ
 
   }
 
-  private  void  checkPermission(){
+  private  void  checkPermission(@NonNull Result result){
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-      for (String permission: permissions){
-        if(activity != null){
+      if(activity != null){
+        for (String permission: permissions){
           int i = ContextCompat.checkSelfPermission(activity,permission);
           if(i != PERMISSION_GRANTED){
-            requestPermission();
+            ActivityCompat.requestPermissions(activity,permissions,REQ_CODE);
             return;
           }
         }
+
+      }else{
+        Map<String,String> map = new HashMap<>();
+        map.put("code","A00001");
+        map.put("message","权限请求-activity获取失败");
+        result.success(map);
       }
-      requestCurrentGps();
     }else {
-      requestCurrentGps();
-    }
-
-  }
-
-  private void  requestPermission(){
-    if(activity != null){
-      ActivityCompat.requestPermissions(activity,permissions,REQ_CODE);
-    }else {
-      setFailed("A0002","权限请求-activity获取失败");
+      Map<String,String> map = new HashMap<>();
+      map.put("code","A00001");
+      map.put("message","不支持该版本");
+      result.success(map);
     }
   }
+
 
   private void  requestCurrentGps(){
     if(activity != null){

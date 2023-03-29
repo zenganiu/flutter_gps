@@ -30,4 +30,8 @@ abstract class FlutterGpsPlatform extends PlatformInterface {
   Future<Map<dynamic, dynamic>> getGps() {
     throw UnimplementedError('getGps() has not been implemented.');
   }
+
+  Future<Map<dynamic, dynamic>> requestPermission() async {
+    throw UnimplementedError('requestPermission() has not been implemented.');
+  }
 }

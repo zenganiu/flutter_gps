@@ -20,4 +20,10 @@ class MethodChannelFlutterGps extends FlutterGpsPlatform {
     final res = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('gps');
     return res ?? {};
   }
+
+  @override
+  Future<Map<dynamic, dynamic>> requestPermission() async {
+    final res = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('requestPermission');
+    return res ?? {};
+  }
 }
