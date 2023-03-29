@@ -14,6 +14,7 @@ class FlutterGps {
     return data;
   }
 
+  @Deprecated('推荐使用`permission_handler`插件来获取权限')
   Future<PermissionEntity> requestPermission() async {
     final json = await FlutterGpsPlatform.instance.requestPermission();
     final data = PermissionEntity.fromMap(json);

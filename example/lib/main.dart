@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_gps/flutter_gps.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(const MyApp());
@@ -64,11 +65,13 @@ class _MyAppState extends State<MyApp> {
               const SizedBox(height: 12),
               OutlinedButton(
                 onPressed: () async {
-                  final res = await FlutterGps().getGps();
-                  debugPrint(res.toString());
-                  setState(() {
-                    latitude = res.latitude.toString();
-                    longitude = res.longitude.toString();
+                  Permission.location.request().then((value) async {
+                    final res = await FlutterGps().getGps();
+                    debugPrint(res.toString());
+                    setState(() {
+                      latitude = res.latitude.toString();
+                      longitude = res.longitude.toString();
+                    });
                   });
                 },
                 child: const Text('getGps'),
