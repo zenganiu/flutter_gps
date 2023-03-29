@@ -13,13 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.flutter.plugin.common.MethodChannel;
+
 public class GpsListener implements LocationListener {
 
-    private  final FlutterGpsPlugin gpsPlugin;
+    private MethodChannel.Result result;
     private  final LocationManager locationManager;
 
-    GpsListener(FlutterGpsPlugin gpsPlugin, LocationManager locationManager){
-        this.gpsPlugin = gpsPlugin;
+    GpsListener(MethodChannel.Result result, LocationManager locationManager){
+        this.result = result;
         this.locationManager = locationManager;
     }
 
@@ -30,7 +32,6 @@ public class GpsListener implements LocationListener {
         criteria.setBearingRequired(false);
         criteria.setPowerRequirement(Criteria.POWER_LOW);
         criteria.setCostAllowed(true);
-
         locationManager.requestSingleUpdate(criteria,this, Looper.getMainLooper());
     }
 
@@ -42,7 +43,7 @@ public class GpsListener implements LocationListener {
         map.put("longitude",String.valueOf(location.getLongitude()));
         map.put("code","00000");
         map.put("message","获取成功");
-        gpsPlugin.setResult(map);
+        result.success(map);
     }
 
     @Override
