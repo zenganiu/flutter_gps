@@ -1,15 +1,9 @@
-import 'dart:convert';
-import 'dart:developer';
-
-import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gps/common_util.dart';
-import 'package:flutter_gps/flutter_gps.dart';
-import 'package:flutter_gps/geocode_util.dart';
+import 'package:flutter_gps/gps.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:maps_toolkit/maps_toolkit.dart';
 
 void main() {
   runApp(const MyApp());

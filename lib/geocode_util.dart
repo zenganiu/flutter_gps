@@ -1,27 +1,34 @@
 import 'package:maps_toolkit/maps_toolkit.dart';
 
 import 'common_util.dart';
+import 'geocode_entity.dart';
 
 String _pathHead = 'assets/';
 
 class GeocodeUtil {
+  ///
   GeocodeUtil._();
 
+  /// 经纬度地理编码
   static Future<GeocodeEntity> geocodeGPS(double lat, double lon, {String pathHead = 'assets/'}) async {
     _pathHead = pathHead;
     var data = const GeocodeEntity(province: '', city: '', district: '', provinceId: '', cityId: '', districtId: '');
+    // 省
     final province = await _getProvince(lat, lon);
     data = data.copyWith(province: province.name, provinceId: province.id);
 
+    // 市
     final city = await _getCity(lat, lon, data.provinceId);
     data = data.copyWith(city: city.name, cityId: city.id);
 
+    // 区/县
     final district = await _getDistrict(lat, lon, data.cityId);
     data = data.copyWith(district: district.name, districtId: district.id);
 
     return data;
   }
 
+  /// 获取区/县
   static Future<ParseResult> _getDistrict(double lat, double lon, String id) async {
     if (id.isEmpty) {
       return const ParseResult(name: '', id: '');
@@ -128,81 +135,4 @@ class ParseResult {
     required this.name,
     required this.id,
   });
-}
-
-/// 地理编码模型
-class GeocodeEntity {
-  /// 省
-  final String province;
-
-  ///
-  final String provinceId;
-
-  /// 市
-  final String city;
-
-  ///
-  final String cityId;
-
-  /// 区
-  final String district;
-
-  ///
-  final String districtId;
-
-//<editor-fold desc="Data Methods">
-  const GeocodeEntity({
-    required this.province,
-    required this.provinceId,
-    required this.city,
-    required this.cityId,
-    required this.district,
-    required this.districtId,
-  });
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is GeocodeEntity &&
-          runtimeType == other.runtimeType &&
-          province == other.province &&
-          provinceId == other.provinceId &&
-          city == other.city &&
-          cityId == other.cityId &&
-          district == other.district &&
-          districtId == other.districtId);
-
-  @override
-  int get hashCode =>
-      province.hashCode ^
-      provinceId.hashCode ^
-      city.hashCode ^
-      cityId.hashCode ^
-      district.hashCode ^
-      districtId.hashCode;
-
-  @override
-  String toString() {
-    return 'GeocodeEntity{ province: $province, provinceId: $provinceId, city: $city, cityId: $cityId, district: $district, districtId: $districtId,}';
-  }
-
-  GeocodeEntity copyWith({
-    String? province,
-    String? provinceId,
-    String? city,
-    String? cityId,
-    String? district,
-    String? districtId,
-  }) {
-    return GeocodeEntity(
-      province: province ?? this.province,
-      provinceId: provinceId ?? this.provinceId,
-      city: city ?? this.city,
-      cityId: cityId ?? this.cityId,
-      district: district ?? this.district,
-      districtId: districtId ?? this.districtId,
-    );
-  }
-
-//</editor-fold>
 }
