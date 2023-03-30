@@ -1,9 +1,15 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_gps/common_util.dart';
 import 'package:flutter_gps/flutter_gps.dart';
+import 'package:flutter_gps/geocode_util.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:maps_toolkit/maps_toolkit.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,8 +26,9 @@ class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   final _flutterGpsPlugin = FlutterGps();
 
-  String latitude = '';
-  String longitude = '';
+  double latitude = 0;
+  double longitude = 0;
+  String geocodeStr = '';
 
   @override
   void initState() {
@@ -69,8 +76,9 @@ class _MyAppState extends State<MyApp> {
                     final res = await FlutterGps().getGps();
                     debugPrint(res.toString());
                     setState(() {
-                      latitude = res.latitude.toString();
-                      longitude = res.longitude.toString();
+                      latitude = res.latitude;
+                      longitude = res.longitude;
+                      decodeGPS();
                     });
                   });
                 },
@@ -78,7 +86,7 @@ class _MyAppState extends State<MyApp> {
               ),
               const SizedBox(height: 12),
               Text(
-                'latitude: $latitude \nlongitude: $longitude',
+                'latitude: $latitude \nlongitude: $longitude \ngeocodeStr:$geocodeStr',
                 style: const TextStyle(fontSize: 15, color: Colors.black),
               )
             ],
@@ -86,5 +94,13 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
+  }
+
+  Future<void> decodeGPS() async {
+    final res = await GeocodeUtil.geocodeGPS(latitude, longitude);
+    print(res);
+    setState(() {
+      geocodeStr = '${res.province}-${res.city}-${res.district}';
+    });
   }
 }

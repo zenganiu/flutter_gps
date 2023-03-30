@@ -98,6 +98,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.1"
+  maps_toolkit:
+    dependency: transitive
+    description:
+      name: maps_toolkit
+      sha256: "7771cd4d1afb1849be0c7d546b4e38330efc8573c7ee6c41d5e1ab62458c5b3d"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.1"
   matcher:
     dependency: transitive
     description:
