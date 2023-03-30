@@ -88,7 +88,14 @@ class _MyAppState extends State<MyApp> {
               Text(
                 'latitude: $latitude \nlongitude: $longitude \ngeocodeStr:$geocodeStr',
                 style: const TextStyle(fontSize: 15, color: Colors.black),
-              )
+              ),
+              OutlinedButton(
+                onPressed: () async {
+                  final res = await GeocodeUtil.geocodeGPS(19.73968, 110.00701);
+                  print(res);
+                },
+                child: const Text('geocode'),
+              ),
             ],
           ),
         ),

@@ -67,9 +67,9 @@ class GeocodeUtil {
 
   /// 获取省
   static Future<ParseResult> _getProvince(double lat, double lon) async {
-    final map = await CommonUtil.getAssetJsonList('${_pathHead}province/short.json');
+    final jsList = await CommonUtil.getAssetJsonList('${_pathHead}province/short.json');
     List<String> ids = [];
-    for (final item in map) {
+    for (final item in jsList) {
       if (item is Map) {
         final status = GeocodeUtil.containsLocation(LatLng(lat, lon), item['polygon']);
         if (status) {
