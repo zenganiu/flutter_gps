@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gps/gps.dart';
@@ -86,9 +87,18 @@ class _MyAppState extends State<MyApp> {
               OutlinedButton(
                 onPressed: () async {
                   final res = await GeocodeUtil.geocodeGPS(19.73968, 110.00701);
-                  print(res);
+                  if (kDebugMode) {
+                    print(res);
+                  }
                 },
                 child: const Text('geocode'),
+              ),
+              OutlinedButton(
+                onPressed: () async {
+                  final res = await IpUtil.getIpAddress('1.0.2.2');
+                  debugPrint('${res.province}-${res.city}-${res.district}');
+                },
+                child: const Text('ipAddr'),
               ),
             ],
           ),
@@ -99,7 +109,9 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> decodeGPS() async {
     final res = await GeocodeUtil.geocodeGPS(latitude, longitude);
-    print(res);
+    if (kDebugMode) {
+      print(res);
+    }
     setState(() {
       geocodeStr = '${res.province}-${res.city}-${res.district}';
     });

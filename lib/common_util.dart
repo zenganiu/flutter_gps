@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 class CommonUtil {
@@ -7,20 +8,30 @@ class CommonUtil {
 
   /// 获取asset中的jsonMap数据
   static Future<List<dynamic>> getAssetJsonList(String path) async {
-    final js = await getAssetJson(path);
-    if (js is List) {
-      return js;
+    try {
+      final js = await getAssetJson(path);
+      if (js is List) {
+        return js;
+      }
+      return [];
+    } catch (e) {
+      debugPrint('json文件不存在: $path');
+      return [];
     }
-    return [];
   }
 
   /// 获取asset中的jsonMap数据
   static Future<Map<dynamic, dynamic>> getAssetJsonMap(String path) async {
-    final js = await getAssetJson(path);
-    if (js is Map) {
-      return js;
+    try {
+      final js = await getAssetJson(path);
+      if (js is Map) {
+        return js;
+      }
+      return {};
+    } catch (e) {
+      debugPrint('json文件不存在: $path');
+      return {};
     }
-    return {};
   }
 
   /// 获取asset中的json数据

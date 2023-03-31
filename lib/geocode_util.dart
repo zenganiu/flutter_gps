@@ -1,3 +1,4 @@
+import 'package:flutter_gps/parse_result.dart';
 import 'package:maps_toolkit/maps_toolkit.dart';
 
 import 'common_util.dart';
@@ -126,13 +127,4 @@ class GeocodeUtil {
     }
     return false;
   }
-}
-
-class ParseResult {
-  final String name;
-  final String id;
-  const ParseResult({
-    required this.name,
-    required this.id,
-  });
 }

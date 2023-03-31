@@ -5,3 +5,4 @@ export 'gps_entity.dart';
 export 'common_util.dart';
 export 'geocode_util.dart';
 export 'geocode_entity.dart';
+export 'ip_util.dart';
