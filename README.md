@@ -16,7 +16,7 @@
 ```yaml
 dependencies:
   # 最新版本
-  flutter_dmcb_alibc:
+  flutter_gps:
     git: https://github.com/zenganiu/flutter_gps.git
 ```
 
