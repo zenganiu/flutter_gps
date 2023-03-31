@@ -19,6 +19,7 @@ public class FlutterGpsPlugin: NSObject, FlutterPlugin {
             locationResult = result
             loaction()
         default:
+            result("notfond method")
             break
         }
     }
@@ -26,7 +27,7 @@ public class FlutterGpsPlugin: NSObject, FlutterPlugin {
     private func loaction() {
         var lm = CLLocationManager()
         lm.delegate = self
-        lm.desiredAccuracy = .leastNormalMagnitude
+        lm.desiredAccuracy = kCLLocationAccuracyHundredMeters
         lm.requestWhenInUseAuthorization()
         lm.startUpdatingLocation()
         sysLocationManger = lm
@@ -40,8 +41,8 @@ extension FlutterGpsPlugin: CLLocationManagerDelegate {
             sysLocationManger = nil
             let dict: Dictionary<String, Any> = ["code": "00000",
                                                  "message": "定位成功",
-                                                 "latitude": lo.coordinate.latitude,
-                                                 "longitude": lo.coordinate.longitude]
+                                                 "latitude": lo.coordinate.latitude.roundTo(places: 6),
+                                                 "longitude": lo.coordinate.longitude.roundTo(places: 6)]
             locationResult?(dict)
         }
     }
@@ -55,3 +56,15 @@ extension FlutterGpsPlugin: CLLocationManagerDelegate {
         locationResult?(dict)
     }
 }
+
+
+fileprivate extension Double {
+    func roundTo(places:Int) -> Double {
+        let divisor = pow(10.0, Double(places))
+
+        return (self * divisor).rounded() / divisor
+
+    }
+
+}
+
