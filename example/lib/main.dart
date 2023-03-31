@@ -86,7 +86,7 @@ class _MyAppState extends State<MyApp> {
               ),
               OutlinedButton(
                 onPressed: () async {
-                  final res = await GeocodeUtil.geocodeGPS(19.73968, 110.00701);
+                  final res = await GeocodeUtil.geocodeGPS(19.73968, 110.00701, pathHead: 'assets/');
                   if (kDebugMode) {
                     print(res);
                   }
@@ -95,7 +95,7 @@ class _MyAppState extends State<MyApp> {
               ),
               OutlinedButton(
                 onPressed: () async {
-                  final res = await IpUtil.getIpAddress('183.6.24.203');
+                  final res = await IpUtil.getIpAddress('183.6.24.203', pathHead: 'assets/');
                   debugPrint(res.address);
                 },
                 child: const Text('ipAddr'),

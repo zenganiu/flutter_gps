@@ -9,6 +9,7 @@
 ## 特性
 * 单次获取经纬度信息
 * 经纬度、ip反向地理编码获取地址信息(省、市、区)
+* 资源文件目前仅支持本地，尚未实现远程按需下载使用。后续将会完善此功能
 
 ## 安装
 在 `pubspec.yaml` 中添加
@@ -34,7 +35,17 @@ dependencies:
 <string>App需要您的同意, APP才能在使用期间访问位置</string>
 ```
 ## 使用
-详细使用请参考项目`example`用例，下面只列出常用方法
+* 将`example/assets`目录下的资源文件添加到自己的项目的`assets`中，并在`pubspec.yaml`中加入如下配置。
+```yaml
+  assets:
+    - assets/province/
+    - assets/ip/
+    - assets/city/
+    - assets/district/
+    - assets/areaList/
+```
+目前五个文件夹必须在同一级目录，如果您的资源目录结构不一致，对应设置`pathHead`参数即可
+* 详细使用请参考项目`example`用例，下面只列出常用方法
 ```dart
 import 'package:flutter_gps/gps.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -43,9 +54,9 @@ import 'package:permission_handler/permission_handler.dart';
 final res1 = await FlutterGps().getGps();
 
 // 经纬度反向地理编码获取地址信息(省、市、区)
-final res2 = await GeocodeUtil.geocodeGPS(res1.latitude, res1.longitude);
+final res2 = await GeocodeUtil.geocodeGPS(res1.latitude, res1.longitude, pathHead: 'assets/');
 
 // 经纬度反向地理编码获取地址信息(省、市、区)
- final res3 = await IpUtil.getIpAddress('183.6.24.203');
+ final res3 = await IpUtil.getIpAddress('183.6.24.203', pathHead: 'assets/');
 
 ```
