@@ -32,8 +32,6 @@ public class FlutterGpsPlugin implements FlutterPlugin, MethodCallHandler, Activ
   /// when the Flutter Engine is detached from the Activity
   private MethodChannel channel;
 
-  private Result result;
-
   @Nullable private Activity activity;
   private static final int REQ_CODE = 9527;
   private static final String[] permissions = new String[]{
@@ -58,8 +56,9 @@ public class FlutterGpsPlugin implements FlutterPlugin, MethodCallHandler, Activ
     if (call.method.equals("getPlatformVersion")) {
       result.success("Android " + android.os.Build.VERSION.RELEASE);
     } else if (call.method.equals("gps")) {
-      this.result = result;
-      checkPermission();
+      requestCurrentGps(result);
+    } else if (call.method.equals("requestPermission")) {
+      checkPermission(result);
     } else {
       result.notImplemented();
     }
@@ -85,54 +84,42 @@ public class FlutterGpsPlugin implements FlutterPlugin, MethodCallHandler, Activ
 
   }
 
-  private  void  checkPermission(){
+  private  void  checkPermission(@NonNull Result result){
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-      for (String permission: permissions){
-        if(activity != null){
+      if(activity != null){
+        for (String permission: permissions){
           int i = ContextCompat.checkSelfPermission(activity,permission);
           if(i != PERMISSION_GRANTED){
-            requestPermission();
+            ActivityCompat.requestPermissions(activity,permissions,REQ_CODE);
             return;
           }
         }
+
+      }else{
+        Map<String,String> map = new HashMap<>();
+        map.put("code","A00001");
+        map.put("message","权限请求-activity获取失败");
+        result.success(map);
       }
-      requestCurrentGps();
     }else {
-      requestCurrentGps();
-    }
-
-  }
-
-  private void  requestPermission(){
-    if(activity != null){
-      ActivityCompat.requestPermissions(activity,permissions,REQ_CODE);
-    }else {
-      setFailed("A0002","权限请求-activity获取失败");
+      Map<String,String> map = new HashMap<>();
+      map.put("code","A00001");
+      map.put("message","不支持该版本");
+      result.success(map);
     }
   }
 
-  private void  requestCurrentGps(){
+
+  private void  requestCurrentGps(@NonNull Result result){
     if(activity != null){
       LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-      GpsListener gpsListener = new GpsListener(this,locationManager);
+      GpsListener gpsListener = new GpsListener(result,locationManager);
       gpsListener.handleGps();
     }else {
-      setFailed("A0001","gps请求-activity获取失败");
+      Map<String,String> map = new HashMap<>();
+      map.put("code","A0001");
+      map.put("message","gps请求-activity获取失败");
+     result.success(map);
     }
   }
-
-
-  public void setResult(Object obj){
-    Result result = this.result;
-    this.result = null;
-    result.success(obj);
-  }
-
-  private  void  setFailed(String code,String message){
-    Map<String,String> map = new HashMap<>();
-    map.put("code",code);
-    map.put("message",message);
-    setResult(map);
-  }
-
 }
