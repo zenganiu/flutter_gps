@@ -95,8 +95,8 @@ class _MyAppState extends State<MyApp> {
               ),
               OutlinedButton(
                 onPressed: () async {
-                  final res = await IpUtil.getIpAddress('1.0.2.2');
-                  debugPrint('${res.province}-${res.city}-${res.district}');
+                  final res = await IpUtil.getIpAddress('183.6.24.203');
+                  debugPrint(res.address);
                 },
                 child: const Text('ipAddr'),
               ),
@@ -113,7 +113,7 @@ class _MyAppState extends State<MyApp> {
       print(res);
     }
     setState(() {
-      geocodeStr = '${res.province}-${res.city}-${res.district}';
+      geocodeStr = res.address;
     });
   }
 }

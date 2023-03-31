@@ -18,6 +18,12 @@ class GeocodeEntity {
   ///
   final String districtId;
 
+  /// 地址
+  String get address {
+    final res = [province, city, district].where((element) => element.isNotEmpty).join('-');
+    return res;
+  }
+
 //<editor-fold desc="Data Methods">
   const GeocodeEntity({
     required this.province,
