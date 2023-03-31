@@ -1,7 +1,7 @@
 name: flutter_gps
 description: A new Flutter project.
 version: 0.0.1
-homepage:
+homepage: https://github.com/zenganiu/flutter_gps
 
 environment:
   sdk: '>=2.19.5 <3.0.0'
