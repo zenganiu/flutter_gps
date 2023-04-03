@@ -95,10 +95,28 @@ class _MyAppState extends State<MyApp> {
               ),
               OutlinedButton(
                 onPressed: () async {
-                  final res = await IpUtil.getIpAddress('183.6.24.203', pathHead: 'assets/');
-                  debugPrint(res.address);
+                  final res = await IpUtil.getIpAddress('183.6.24.203', pathHead: 'assets/', hasGetCoordinate: true);
+                  debugPrint(res.toString());
                 },
                 child: const Text('ipAddr'),
+              ),
+              OutlinedButton(
+                onPressed: () async {
+                  var a = -1;
+                  for (int i = 0; i < 10; i++) {
+                    print('i=$i');
+                    if (i % 2 == 0) {
+                      print('ii=$i');
+                      if (i == 6) {
+                        a = i;
+                        break;
+                      }
+                    }
+                  }
+
+                  print(a);
+                },
+                child: const Text('Test'),
               ),
             ],
           ),
