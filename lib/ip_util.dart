@@ -160,10 +160,25 @@ class IpUtil {
         final startSlices = _getIpSlices(start);
         final endSlices = _getIpSlices(end);
         if (startSlices.isNotEmpty && endSlices.isNotEmpty) {
-          if (startSlices[2] <= ipSlices[2] &&
-              endSlices[2] >= ipSlices[2] &&
+          if (startSlices[2] < ipSlices[2] && endSlices[2] > ipSlices[2]) {
+            final id = js['id'].toString();
+            return id;
+          }
+
+          if (startSlices[2] == ipSlices[2] &&
+              endSlices[2] == ipSlices[2] &&
               startSlices[3] <= ipSlices[3] &&
               endSlices[3] >= ipSlices[3]) {
+            final id = js['id'].toString();
+            return id;
+          }
+
+          if (startSlices[2] == ipSlices[2] && endSlices[2] > ipSlices[2] && startSlices[3] <= ipSlices[3]) {
+            final id = js['id'].toString();
+            return id;
+          }
+
+          if (startSlices[2] < ipSlices[2] && endSlices[2] == ipSlices[2] && endSlices[3] >= ipSlices[3]) {
             final id = js['id'].toString();
             return id;
           }
