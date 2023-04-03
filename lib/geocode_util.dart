@@ -13,7 +13,16 @@ class GeocodeUtil {
   /// 经纬度地理编码
   static Future<GeocodeEntity> geocodeGPS(double lat, double lon, {String pathHead = 'assets/'}) async {
     _pathHead = pathHead;
-    var data = const GeocodeEntity(province: '', city: '', district: '', provinceId: '', cityId: '', districtId: '');
+    var data = GeocodeEntity(
+      province: '',
+      city: '',
+      district: '',
+      provinceId: '',
+      cityId: '',
+      districtId: '',
+      latitude: lat,
+      longitude: lon,
+    );
     // 省
     final province = await _getProvince(lat, lon);
     data = data.copyWith(province: province.name, provinceId: province.id);

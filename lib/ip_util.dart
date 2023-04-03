@@ -11,12 +11,12 @@ class IpUtil {
       final id = await _getGeocodeByIp(ip, pathHead: pathHead);
       return _getGeocode(id);
     } catch (e) {
-      return const GeocodeEntity(province: '', city: '', district: '', provinceId: '', cityId: '', districtId: '');
+      return GeocodeEntity.empty();
     }
   }
 
   static Future<GeocodeEntity> _getGeocode(String id) async {
-    var data = const GeocodeEntity(province: '', city: '', district: '', provinceId: '', cityId: '', districtId: '');
+    var data = GeocodeEntity.empty();
     if (id.isNotEmpty) {
       final jsList = await CommonUtil.getAssetJsonList('${_pathHead}areaList/index.json');
       for (final provinceJs in jsList) {
