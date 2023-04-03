@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'common_util.dart';
 import 'geocode_entity.dart';
 
@@ -6,10 +8,23 @@ String _pathHead = 'assets/';
 class IpUtil {
   IpUtil._();
 
-  static Future<GeocodeEntity> getIpAddress(String ip, {String pathHead = 'assets/'}) async {
+  /// 获取ip所在地理信息
+  ///
+  /// [ip] ip地址
+  /// [pathHead] 资源头目录
+  /// [hasGetCoordinate] 是否获取经纬度
+  static Future<GeocodeEntity> getIpAddress(
+    String ip, {
+    String pathHead = 'assets/',
+    bool hasGetCoordinate = false,
+  }) async {
     try {
       final id = await _getGeocodeByIp(ip, pathHead: pathHead);
-      return _getGeocode(id);
+      var data = await _getGeocode(id);
+      if (hasGetCoordinate) {
+        data = await _getCoordinate(data);
+      }
+      return data;
     } catch (e) {
       return GeocodeEntity.empty();
     }
@@ -64,6 +79,65 @@ class IpUtil {
             }
           }
         }
+      }
+    }
+    return data;
+  }
+
+  /// 获取坐标
+  static Future<GeocodeEntity> _getCoordinate(GeocodeEntity ori) async {
+    var data = ori.copyWith();
+    if (data.provinceId.isEmpty) {
+      return data;
+    }
+    // 省
+    final provinceJs = await CommonUtil.getAssetJsonMap('${_pathHead}province/${data.provinceId}.json');
+    if (provinceJs['location'] is Map &&
+        provinceJs['location']['latitude'] is num &&
+        provinceJs['location']['longitude'] is num) {
+      final latitude = provinceJs['location']['latitude'] as num;
+      final longitude = provinceJs['location']['longitude'] as num;
+      data = data.copyWith(latitude: latitude.toDouble(), longitude: longitude.toDouble());
+    }
+
+    // 市
+    final cityJsList = await CommonUtil.getAssetJsonList('${_pathHead}city/${data.provinceId}.json');
+    if (cityJsList.isEmpty) {
+      return data;
+    }
+    for (final cityJs in cityJsList) {
+      if (cityJs is Map &&
+          cityJs['id'] is String &&
+          cityJs['id'] == data.cityId &&
+          cityJs['location'] is Map &&
+          cityJs['location']['latitude'] is num &&
+          cityJs['location']['longitude'] is num) {
+        final latitude = cityJs['location']['latitude'] as num;
+        final longitude = cityJs['location']['longitude'] as num;
+        data = data.copyWith(latitude: latitude.toDouble(), longitude: longitude.toDouble());
+        break;
+      }
+    }
+
+    // 区
+    if (data.cityId.isEmpty) {
+      return data;
+    }
+    final districtJsList = await CommonUtil.getAssetJsonList('${_pathHead}district/${data.cityId}.json');
+    if (districtJsList.isEmpty) {
+      return data;
+    }
+    for (final districtJs in districtJsList) {
+      if (districtJs is Map &&
+          districtJs['id'] is String &&
+          districtJs['id'] == data.cityId &&
+          districtJs['location'] is Map &&
+          districtJs['location']['latitude'] is num &&
+          districtJs['location']['longitude'] is num) {
+        final latitude = districtJs['location']['latitude'] as num;
+        final longitude = districtJs['location']['longitude'] as num;
+        data = data.copyWith(latitude: latitude.toDouble(), longitude: longitude.toDouble());
+        break;
       }
     }
     return data;
