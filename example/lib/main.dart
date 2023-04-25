@@ -33,7 +33,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     String platformVersion;
     try {
-      platformVersion = await FlutterGps.getPlatformVersion() ?? 'Unknown platform version';
+      platformVersion =
+          await FlutterGps.getPlatformVersion() ?? 'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -59,7 +60,7 @@ class _MyAppState extends State<MyApp> {
               OutlinedButton(
                 onPressed: () async {
                   Permission.location.request().then((value) async {
-                    final res = await FlutterGps.getGps();
+                    final res = await FlutterGps.getCoordinate();
                     debugPrint(res.toString());
                     setState(() {
                       latitude = res.latitude;
@@ -77,7 +78,8 @@ class _MyAppState extends State<MyApp> {
               ),
               OutlinedButton(
                 onPressed: () async {
-                  final res = await FlutterGps.geocodeGPS(19.73968, 110.00701, pathHead: 'assets/');
+                  final res = await FlutterGps.geocodeGPS(19.73968, 110.00701,
+                      pathHead: 'assets/');
                   if (kDebugMode) {
                     print(res);
                   }
@@ -86,14 +88,27 @@ class _MyAppState extends State<MyApp> {
               ),
               OutlinedButton(
                 onPressed: () async {
-                  final res = await FlutterGps.getIpAddress(
+                  final ipStr = await FlutterGps.getIp();
+                  debugPrint(ipStr);
+                  final res = await FlutterGps.geocodeIp(
+                    ipStr,
+                    pathHead: 'assets/',
+                    hasGetCoordinate: true,
+                  );
+                  debugPrint(res.toString());
+                },
+                child: const Text('get ip'),
+              ),
+              OutlinedButton(
+                onPressed: () async {
+                  final res = await FlutterGps.geocodeIp(
                     '183.6.24.203',
                     pathHead: 'assets/',
                     hasGetCoordinate: true,
                   );
                   debugPrint(res.toString());
                 },
-                child: const Text('ipAddr'),
+                child: const Text('ip geocode'),
               ),
               OutlinedButton(
                 onPressed: () async {

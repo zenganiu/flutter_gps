@@ -13,7 +13,7 @@ class IpUtil {
   /// [ip] ip地址
   /// [pathHead] 资源头目录
   /// [hasGetCoordinate] 是否获取经纬度
-  static Future<GeocodeEntity> getIpAddress(
+  static Future<GeocodeEntity> geocodeIp(
     String ip, {
     String pathHead = 'assets/',
     bool hasGetCoordinate = false,
@@ -33,14 +33,18 @@ class IpUtil {
   static Future<GeocodeEntity> _getGeocode(String id) async {
     var data = GeocodeEntity.empty();
     if (id.isNotEmpty) {
-      final jsList = await CommonUtil.getAssetJsonList('${_pathHead}areaList/index.json');
+      final jsList =
+          await CommonUtil.getAssetJsonList('${_pathHead}areaList/index.json');
       for (final provinceJs in jsList) {
         if (provinceJs is Map) {
           // 省
-          final provinceId = provinceJs['id'] != null ? provinceJs['id'].toString() : '';
-          final provinceName = provinceJs['name'] != null ? provinceJs['name'].toString() : '';
+          final provinceId =
+              provinceJs['id'] != null ? provinceJs['id'].toString() : '';
+          final provinceName =
+              provinceJs['name'] != null ? provinceJs['name'].toString() : '';
           if (provinceId.isNotEmpty && provinceId == id) {
-            data = data.copyWith(province: provinceName, provinceId: provinceId);
+            data =
+                data.copyWith(province: provinceName, provinceId: provinceId);
             return data;
           }
           // 市
@@ -49,18 +53,28 @@ class IpUtil {
             for (final cityJs in cityList) {
               if (cityJs is Map) {
                 // 省
-                final cityId = cityJs['id'] != null ? cityJs['id'].toString() : '';
-                final cityName = cityJs['name'] != null ? cityJs['name'].toString() : '';
+                final cityId =
+                    cityJs['id'] != null ? cityJs['id'].toString() : '';
+                final cityName =
+                    cityJs['name'] != null ? cityJs['name'].toString() : '';
                 if (cityId.isNotEmpty && cityId == id) {
-                  data = data.copyWith(province: provinceName, provinceId: provinceId, cityId: cityId, city: cityName);
+                  data = data.copyWith(
+                      province: provinceName,
+                      provinceId: provinceId,
+                      cityId: cityId,
+                      city: cityName);
                   return data;
                 }
                 if (cityJs['children'] is List) {
                   final districtList = cityJs['children'] as List;
                   for (final districtJs in districtList) {
                     // 区
-                    final districtId = districtJs['id'] != null ? districtJs['id'].toString() : '';
-                    final districtName = districtJs['name'] != null ? districtJs['name'].toString() : '';
+                    final districtId = districtJs['id'] != null
+                        ? districtJs['id'].toString()
+                        : '';
+                    final districtName = districtJs['name'] != null
+                        ? districtJs['name'].toString()
+                        : '';
 
                     if (districtId.isNotEmpty && districtId == id) {
                       data = data.copyWith(
@@ -91,17 +105,20 @@ class IpUtil {
       return data;
     }
     // 省
-    final provinceJs = await CommonUtil.getAssetJsonMap('${_pathHead}province/${data.provinceId}.json');
+    final provinceJs = await CommonUtil.getAssetJsonMap(
+        '${_pathHead}province/${data.provinceId}.json');
     if (provinceJs['location'] is Map &&
         provinceJs['location']['latitude'] is num &&
         provinceJs['location']['longitude'] is num) {
       final latitude = provinceJs['location']['latitude'] as num;
       final longitude = provinceJs['location']['longitude'] as num;
-      data = data.copyWith(latitude: latitude.toDouble(), longitude: longitude.toDouble());
+      data = data.copyWith(
+          latitude: latitude.toDouble(), longitude: longitude.toDouble());
     }
 
     // 市
-    final cityJsList = await CommonUtil.getAssetJsonList('${_pathHead}city/${data.provinceId}.json');
+    final cityJsList = await CommonUtil.getAssetJsonList(
+        '${_pathHead}city/${data.provinceId}.json');
     if (cityJsList.isEmpty) {
       return data;
     }
@@ -114,7 +131,8 @@ class IpUtil {
           cityJs['location']['longitude'] is num) {
         final latitude = cityJs['location']['latitude'] as num;
         final longitude = cityJs['location']['longitude'] as num;
-        data = data.copyWith(latitude: latitude.toDouble(), longitude: longitude.toDouble());
+        data = data.copyWith(
+            latitude: latitude.toDouble(), longitude: longitude.toDouble());
         break;
       }
     }
@@ -123,7 +141,8 @@ class IpUtil {
     if (data.cityId.isEmpty) {
       return data;
     }
-    final districtJsList = await CommonUtil.getAssetJsonList('${_pathHead}district/${data.cityId}.json');
+    final districtJsList = await CommonUtil.getAssetJsonList(
+        '${_pathHead}district/${data.cityId}.json');
     if (districtJsList.isEmpty) {
       return data;
     }
@@ -136,7 +155,8 @@ class IpUtil {
           districtJs['location']['longitude'] is num) {
         final latitude = districtJs['location']['latitude'] as num;
         final longitude = districtJs['location']['longitude'] as num;
-        data = data.copyWith(latitude: latitude.toDouble(), longitude: longitude.toDouble());
+        data = data.copyWith(
+            latitude: latitude.toDouble(), longitude: longitude.toDouble());
         break;
       }
     }
@@ -144,12 +164,14 @@ class IpUtil {
   }
 
   /// 获取ip对应的地理编码
-  static Future<String> _getGeocodeByIp(String ip, {String pathHead = 'assets/'}) async {
+  static Future<String> _getGeocodeByIp(String ip,
+      {String pathHead = 'assets/'}) async {
     final ipSlices = _getIpSlices(ip);
     if (ipSlices.isEmpty) {
       return '';
     }
-    final jsList = await CommonUtil.getAssetJsonList('${_pathHead}ip/${ipSlices[0]}.${ipSlices[1]}.json');
+    final jsList = await CommonUtil.getAssetJsonList(
+        '${_pathHead}ip/${ipSlices[0]}.${ipSlices[1]}.json');
     if (jsList.isEmpty) {
       return '';
     }
@@ -173,12 +195,16 @@ class IpUtil {
             return id;
           }
 
-          if (startSlices[2] == ipSlices[2] && endSlices[2] > ipSlices[2] && startSlices[3] <= ipSlices[3]) {
+          if (startSlices[2] == ipSlices[2] &&
+              endSlices[2] > ipSlices[2] &&
+              startSlices[3] <= ipSlices[3]) {
             final id = js['id'].toString();
             return id;
           }
 
-          if (startSlices[2] < ipSlices[2] && endSlices[2] == ipSlices[2] && endSlices[3] >= ipSlices[3]) {
+          if (startSlices[2] < ipSlices[2] &&
+              endSlices[2] == ipSlices[2] &&
+              endSlices[3] >= ipSlices[3]) {
             final id = js['id'].toString();
             return id;
           }
@@ -198,8 +224,10 @@ class IpUtil {
       return [];
     }
     const int flag = 1000;
-    final ipSlices =
-        ipList.map((e) => int.tryParse(e) ?? flag).where((element) => element >= 0 && element <= 255).toList();
+    final ipSlices = ipList
+        .map((e) => int.tryParse(e) ?? flag)
+        .where((element) => element >= 0 && element <= 255)
+        .toList();
     if (ipSlices.length == 4) {
       return ipSlices;
     }

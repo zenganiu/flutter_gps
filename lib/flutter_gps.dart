@@ -5,6 +5,10 @@ export 'gps_entity.dart';
 export 'common_util.dart';
 export 'geocode_entity.dart';
 
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_gps/geocode_entity.dart';
 import 'package:flutter_gps/geocode_util.dart';
 import 'package:flutter_gps/ip_util.dart';
@@ -22,14 +26,39 @@ class FlutterGps {
   }
 
   /// gps获取经纬度
-  static Future<GpsEntity> getGps() async {
+  static Future<GpsEntity> getCoordinate() async {
     final json = await FlutterGpsPlatform.instance.getGps();
     final data = GpsEntity.fromMap(json);
     return data;
   }
 
+  /// 获取ip地址
+  static Future<String> getIp() async {
+    try {
+      HttpClient client = HttpClient();
+      final uri = Uri.tryParse('https://api.ipify.org?format=json');
+      if (uri == null) {
+        return '';
+      }
+      final request = await client.getUrl(uri);
+      final response = await request.close();
+      if (response.statusCode == 200) {
+        final responseBody = await response.transform(utf8.decoder).join();
+        final js = jsonDecode(responseBody);
+        if (js is Map && js['ip'] is String) {
+          return js['ip'] as String;
+        }
+      }
+      return '';
+    } catch (e) {
+      debugPrint("FlutterGps-getIp: $e");
+      return '';
+    }
+  }
+
   /// 经纬度地理反编码
-  static Future<GeocodeEntity> geocodeGPS(double lat, double lon, {String pathHead = 'assets/'}) async {
+  static Future<GeocodeEntity> geocodeGPS(double lat, double lon,
+      {String pathHead = 'assets/'}) async {
     final res = await GeocodeUtil.geocodeGPS(lat, lon, pathHead: pathHead);
     return res;
   }
@@ -39,12 +68,13 @@ class FlutterGps {
   /// [ip] ip地址
   /// [pathHead] 资源头目录
   /// [hasGetCoordinate] 是否获取经纬度
-  static Future<GeocodeEntity> getIpAddress(
+  static Future<GeocodeEntity> geocodeIp(
     String ip, {
     String pathHead = 'assets/',
     bool hasGetCoordinate = false,
   }) async {
-    final res = await IpUtil.getIpAddress(ip, pathHead: pathHead, hasGetCoordinate: hasGetCoordinate);
+    final res = await IpUtil.geocodeIp(ip,
+        pathHead: pathHead, hasGetCoordinate: hasGetCoordinate);
     return res;
   }
 
