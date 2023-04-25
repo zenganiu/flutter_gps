@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gps/gps.dart';
+import 'package:flutter_gps/flutter_gps.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() {
@@ -19,7 +19,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  final _flutterGpsPlugin = FlutterGps();
 
   double latitude = 0;
   double longitude = 0;
@@ -31,22 +30,15 @@ class _MyAppState extends State<MyApp> {
     initPlatformState();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
     try {
-      platformVersion = await _flutterGpsPlugin.getPlatformVersion() ?? 'Unknown platform version';
+      platformVersion =
+          await FlutterGps.getPlatformVersion() ?? 'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
     if (!mounted) return;
-
     setState(() {
       _platformVersion = platformVersion;
     });
@@ -68,7 +60,7 @@ class _MyAppState extends State<MyApp> {
               OutlinedButton(
                 onPressed: () async {
                   Permission.location.request().then((value) async {
-                    final res = await FlutterGps().getGps();
+                    final res = await FlutterGps.getCoordinate();
                     debugPrint(res.toString());
                     setState(() {
                       latitude = res.latitude;
@@ -86,7 +78,8 @@ class _MyAppState extends State<MyApp> {
               ),
               OutlinedButton(
                 onPressed: () async {
-                  final res = await GeocodeUtil.geocodeGPS(19.73968, 110.00701, pathHead: 'assets/');
+                  final res = await FlutterGps.geocodeCoordinate(19.73968, 110.00701,
+                      pathHead: 'assets/');
                   if (kDebugMode) {
                     print(res);
                   }
@@ -95,10 +88,27 @@ class _MyAppState extends State<MyApp> {
               ),
               OutlinedButton(
                 onPressed: () async {
-                  final res = await IpUtil.getIpAddress('183.6.24.203', pathHead: 'assets/', hasGetCoordinate: true);
+                  final ipStr = await FlutterGps.getIp();
+                  debugPrint(ipStr);
+                  final res = await FlutterGps.geocodeIp(
+                    ipStr,
+                    pathHead: 'assets/',
+                    hasGetCoordinate: true,
+                  );
                   debugPrint(res.toString());
                 },
-                child: const Text('ipAddr'),
+                child: const Text('get ip'),
+              ),
+              OutlinedButton(
+                onPressed: () async {
+                  final res = await FlutterGps.geocodeIp(
+                    '183.6.24.203',
+                    pathHead: 'assets/',
+                    hasGetCoordinate: true,
+                  );
+                  debugPrint(res.toString());
+                },
+                child: const Text('ip geocode'),
               ),
               OutlinedButton(
                 onPressed: () async {
@@ -126,7 +136,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> decodeGPS() async {
-    final res = await GeocodeUtil.geocodeGPS(latitude, longitude);
+    final res = await FlutterGps.geocodeCoordinate(latitude, longitude);
     if (kDebugMode) {
       print(res);
     }
