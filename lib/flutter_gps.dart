@@ -57,7 +57,7 @@ class FlutterGps {
   }
 
   /// 经纬度地理反编码
-  static Future<GeocodeEntity> geocodeGPS(double lat, double lon,
+  static Future<GeocodeEntity> geocodeCoordinate(double lat, double lon,
       {String pathHead = 'assets/'}) async {
     final res = await GeocodeUtil.geocodeGPS(lat, lon, pathHead: pathHead);
     return res;

@@ -47,16 +47,18 @@ dependencies:
 目前五个文件夹必须在同一级目录，如果您的资源目录结构不一致，对应设置`pathHead`参数即可
 * 详细使用请参考项目`example`用例，下面只列出常用方法
 ```dart
-import 'package:flutter_gps/gps.dart';
+import 'package:flutter_gps/flutter_gps.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 // 获取GPS定位经纬度
-final res1 = await FlutterGps().getGps();
-
+final coordinate = await FlutterGps().getCoordinate();
 // 经纬度反向地理编码获取地址信息(省、市、区)
-final res2 = await GeocodeUtil.geocodeGPS(res1.latitude, res1.longitude, pathHead: 'assets/');
+final res1 = await FlutterGps().geocodeCoordinate(coordinate.latitude, coordinate.longitude, pathHead: 'assets/');
 
+
+// 获取ip地址
+final ipStr = await FlutterGps().getIp();
 // 经纬度反向地理编码获取地址信息(省、市、区)
- final res3 = await IpUtil.getIpAddress('183.6.24.203', pathHead: 'assets/');
+ final res2 = await IpUtil.geocodeIp(ipStr, pathHead: 'assets/');
 
 ```

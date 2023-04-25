@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> {
               ),
               OutlinedButton(
                 onPressed: () async {
-                  final res = await FlutterGps.geocodeGPS(19.73968, 110.00701,
+                  final res = await FlutterGps.geocodeCoordinate(19.73968, 110.00701,
                       pathHead: 'assets/');
                   if (kDebugMode) {
                     print(res);
@@ -136,7 +136,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> decodeGPS() async {
-    final res = await FlutterGps.geocodeGPS(latitude, longitude);
+    final res = await FlutterGps.geocodeCoordinate(latitude, longitude);
     if (kDebugMode) {
       print(res);
     }
